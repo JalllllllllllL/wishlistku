@@ -13,8 +13,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Daftarkan Route Auth di sini
-const authRoutes = require('./src/routes/authRoutes');
-app.use('/api/auth', authRoutes);
+const wishlistRoutes = require('./src/routes/wishlistRoutes');
+app.use('/api/wishlists', wishlistRoutes);
 
 // Route Default / Health Check
 app.get('/', (req, res) => {
