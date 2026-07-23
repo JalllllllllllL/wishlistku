@@ -12,14 +12,11 @@
     errorMessage = "";
 
     try {
-      const response = await fetch(
-        "https://wishlistku-backend.onrender.com/api/auth/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        },
-      );
+      const response = await fetch("https://wishlistku-backend.onrender.com", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
       const result = await response.json();
 
