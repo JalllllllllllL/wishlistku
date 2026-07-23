@@ -3,7 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 // Memanggil koneksi database agar langsung dites saat server start
-require('./db');
+require('./src/config/db');
 
 const app = express();
 
