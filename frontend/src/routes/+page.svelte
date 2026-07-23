@@ -110,9 +110,12 @@
 
   async function fetchWishlists(token) {
     try {
-      const response = await fetch("http://localhost:5000/api/wishlist", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetch(
+        "https://wishlistku-backend.onrender.com/api/wishlist",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       if (response.ok) {
         const result = await response.json();
         wishlists = result.data;
@@ -134,17 +137,20 @@
     isSubmitting = true;
 
     try {
-      const response = await fetch("http://localhost:5000/api/wishlist", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        "https://wishlistku-backend.onrender.com/api/wishlist",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            itemName: newItemName,
+            targetPrice: parseFloat(newTargetPrice),
+          }),
         },
-        body: JSON.stringify({
-          itemName: newItemName,
-          targetPrice: parseFloat(newTargetPrice),
-        }),
-      });
+      );
 
       if (response.ok) {
         newItemName = "";
