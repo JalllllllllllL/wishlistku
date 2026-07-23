@@ -25,10 +25,16 @@
   // ==========================================
   // PERHITUNGAN RINGKASAN STATISTIK (REAKTIF)
   // ==========================================
-  $: totalTarget = wishlists.reduce((sum, item) => sum + item.targetPrice, 0);
-  $: totalSaved = wishlists.reduce((sum, item) => sum + item.savedAmount, 0);
+  $: totalTarget = wishlists.reduce(
+    (sum, item) => sum + (item.targetPrice || 0),
+    0,
+  );
+  $: totalSaved = wishlists.reduce(
+    (sum, item) => sum + (item.savedAmount || 0),
+    0,
+  );
   $: totalRemaining = wishlists.reduce((sum, item) => {
-    const sisa = item.targetPrice - item.savedAmount;
+    const sisa = (item.targetPrice || 0) - (item.savedAmount || 0);
     return sum + (sisa > 0 ? sisa : 0);
   }, 0);
 
@@ -76,7 +82,7 @@
     } else {
       const userData = parseJwt(token);
       if (userData) {
-        userName = userData.name || "Pengguna";
+        userName = userData.name || userData.username || "Pengguna";
         userEmail = userData.email || "Email tidak tersedia";
       }
     }
@@ -110,12 +116,15 @@
 
   async function fetchWishlists(token) {
     try {
-      const response = await fetch("https://wishlistku-backend.onrender.com", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetch(
+        "https://wishlistku-backend.onrender.com/api/wishlists",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       if (response.ok) {
         const result = await response.json();
-        wishlists = result.data;
+        wishlists = result.data || result;
       } else if (response.status === 401 || response.status === 403) {
         localStorage.removeItem("token");
         goto("/login");
@@ -134,17 +143,20 @@
     isSubmitting = true;
 
     try {
-      const response = await fetch("https://wishlistku-backend.onrender.com", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        "https://wishlistku-backend.onrender.com/api/wishlists",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            itemName: newItemName,
+            targetPrice: parseFloat(newTargetPrice),
+          }),
         },
-        body: JSON.stringify({
-          itemName: newItemName,
-          targetPrice: parseFloat(newTargetPrice),
-        }),
-      });
+      );
 
       if (response.ok) {
         newItemName = "";
@@ -153,7 +165,7 @@
         fetchWishlists(token);
       } else {
         const err = await response.json();
-        alert(err.message);
+        alert(err.message || "Gagal menambahkan wishlist");
       }
     } catch (error) {
       console.error(error);
@@ -263,7 +275,7 @@
     </button>
   </div>
 
-  <!-- 4. FORM TAMBAH BARANG IMPAN -->
+  <!-- 4. FORM TAMBAH BARANG IMPIAN -->
   {#if showForm}
     <form class="add-form premium-shadow" on:submit={handleCreateWishlist}>
       <h4>🎯 Tambah Impian Baru</h4>
@@ -309,9 +321,9 @@
     </div>
   {:else}
     <div class="wishlist-grid">
-      {#each wishlists as item (item.id)}
+      {#each wishlists as item (item.id || item._id)}
         <WishlistCard
-          id={item.id}
+          id={item.id || item._id}
           itemName={item.itemName}
           targetPrice={item.targetPrice}
           savedAmount={item.savedAmount}
@@ -710,104 +722,53 @@
     }
   }
 
-  /* =================================================== */
-  /* MEDIA QUERIES (SMARTPHONE) */
-  /* =================================================== */
-
-  /* Layar Tablet & Smartphone (< 768px) */
   @media (max-width: 768px) {
     .dashboard-container {
       margin: 20px auto;
       padding: 0 16px;
     }
-
     .profile-card {
       padding: 20px;
       gap: 16px;
     }
-
-    .profile-left {
-      gap: 14px;
-    }
-
-    .avatar-gradient {
-      width: 52px;
-      height: 52px;
-      font-size: 1.4rem;
-      border-radius: 16px;
-    }
-
-    .profile-info h2 {
-      font-size: 1.25rem;
-    }
-
-    .summary-container {
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-    }
-
-    .summary-box {
-      padding: 16px;
-      gap: 12px;
-    }
-
-    .summary-icon {
-      width: 44px;
-      height: 44px;
-      font-size: 1.3rem;
-      border-radius: 12px;
-    }
-
-    .summary-text h4 {
-      font-size: 1.05rem;
-    }
   }
 
-  /* Layar hp Kecil (< 576px) */
   @media (max-width: 576px) {
     .profile-card {
       flex-direction: column;
       align-items: stretch;
     }
-
     .profile-actions {
       width: 100%;
       justify-content: space-between;
       border-top: 1px solid #f1f5f9;
       padding-top: 12px;
     }
-
     .btn-logout {
       flex: 1;
       text-align: center;
     }
-
     .summary-container {
-      grid-template-columns: 1fr; /* 1 Kolom Penuh di HP */
+      grid-template-columns: 1fr;
     }
-
     .dashboard-header {
       flex-direction: column;
       align-items: stretch;
       gap: 12px;
     }
-
     .btn-gradient {
       width: 100%;
       text-align: center;
     }
-
     .form-row {
       flex-direction: column;
       gap: 12px;
     }
-
     .form-group {
       min-width: 100%;
     }
-
     .wishlist-grid {
-      grid-template-columns: 1fr; /* Kartu wishlist tampil 1 kolom penuh di HP */
+      grid-template-columns: 1fr;
     }
   }
 </style>

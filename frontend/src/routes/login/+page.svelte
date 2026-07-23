@@ -12,11 +12,14 @@
     errorMessage = "";
 
     try {
-      const response = await fetch("https://wishlistku-backend.onrender.com", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        "https://wishlistku-backend.onrender.com/api/auth/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        },
+      );
 
       const result = await response.json();
 
@@ -27,7 +30,7 @@
         // 2. Simpan Nama & Email User
         const userName =
           result.name ||
-          (result.user && result.user.name) ||
+          (result.user && result.user.username) || // Disesuaikan dengan 'username' dari backend
           email.split("@")[0];
         const userEmail =
           result.email || (result.user && result.user.email) || email;

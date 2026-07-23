@@ -1,7 +1,7 @@
 <script>
   import { goto } from "$app/navigation";
 
-  let name = "";
+  let username = "";
   let email = "";
   let password = "";
   let errorMessage = "";
@@ -15,11 +15,14 @@
     successMessage = "";
 
     try {
-      const response = await fetch("https://wishlistku-backend.onrender.com", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      });
+      const response = await fetch(
+        "https://wishlistku-backend.onrender.com/api/auth/register",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, email, password }),
+        },
+      );
 
       const result = await response.json();
 
@@ -56,13 +59,12 @@
     {/if}
 
     <form on:submit={handleRegister}>
-      <!-- Beberapa backend mungkin meminta input nama, kita siapkan kolomnya -->
       <div class="input-group">
-        <label for="name">Nama Lengkap</label>
+        <label for="username">Nama Lengkap / Username</label>
         <input
           type="text"
-          id="name"
-          bind:value={name}
+          id="username"
+          bind:value={username}
           placeholder="Nama Kamu"
           required
         />
@@ -107,7 +109,6 @@
 </div>
 
 <style>
-  /* Styling ini identik dengan halaman login agar konsisten */
   :global(body) {
     margin: 0;
     background-color: #f8fafc;
