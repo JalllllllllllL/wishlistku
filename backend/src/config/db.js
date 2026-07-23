@@ -24,4 +24,4 @@ const pool = new Pool({
   }
 })();
 
-module.exports = pool;q
+module.exports = pool;
