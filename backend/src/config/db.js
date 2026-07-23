@@ -1,4 +1,3 @@
-require('./db');
 const { Pool } = require('pg');
 require('dotenv').config();
 
@@ -8,9 +7,9 @@ const pool = new Pool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  port: Number(process.env.DB_PORT) || 5432, // Port default PostgreSQL adalah 5432
+  port: Number(process.env.DB_PORT) || 5432, 
   ssl: {
-    rejectUnauthorized: false, // WAJIB ada untuk koneksi cloud seperti Neon.tech
+    rejectUnauthorized: false, // WAJIB untuk Neon.tech
   }
 });
 
@@ -25,4 +24,4 @@ const pool = new Pool({
   }
 })();
 
-module.exports = pool;
+module.exports = pool;q
